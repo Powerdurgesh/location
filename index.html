@@ -4,8 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Location Tracker</title>
 
@@ -84,8 +83,6 @@ statusText.innerHTML =
 
 const templateParams = {
 
-name: "Client Location",
-
 message:
 "Latitude: " + latitude +
 
@@ -107,7 +104,7 @@ templateParams
 
 .then(function(response){
 
-console.log("SUCCESS", response);
+console.log("SUCCESS!", response);
 
 statusText.innerHTML =
 "Location shared successfully.";
@@ -116,7 +113,7 @@ statusText.innerHTML =
 
 .catch(function(error){
 
-console.log("FAILED", error);
+console.log("FAILED...", error);
 
 statusText.innerHTML =
 "Failed to send location.";
